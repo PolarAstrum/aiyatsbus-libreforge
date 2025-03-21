@@ -43,6 +43,7 @@ object MigrateEcoEnchants {
     }
 
     private val target = mapOf(
+        "sowrd" to listOf("剑")
         "pickaxe" to listOf("镐"),
         "axe" to listOf("斧"),
         "hoe" to listOf("锄"),
