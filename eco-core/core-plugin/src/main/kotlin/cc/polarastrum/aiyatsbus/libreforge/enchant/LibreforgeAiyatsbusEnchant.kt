@@ -23,7 +23,7 @@ import java.io.File
  * @author mical
  * @date 2024/8/21 19:15
  */
-class LibreforgeAiyatsbusEnchant(
+open class LibreforgeAiyatsbusEnchant(
     id: String,
     file: File,
     ecoConfig: Config,
@@ -32,15 +32,15 @@ class LibreforgeAiyatsbusEnchant(
 
     private val context = ViolationContext(plugin, "enchantment $id")
 
-    private val levels = mutableMapOf<Int, LibreforgeEnchantLevel>()
+    internal val levels = mutableMapOf<Int, LibreforgeEnchantLevel>()
 
     override val trigger: Trigger? = null
 
-    private val conditions: ConditionList
+    internal val conditions: ConditionList
 
     private val effects: EffectList
 
-    fun getLevel(level: Int): LibreforgeEnchantLevel {
+    open fun getLevel(level: Int): LibreforgeEnchantLevel {
         return levels.getOrPut(level) {
             LibreforgeEnchantLevel(this, level, effects, conditions, plugin)
         }

@@ -1,6 +1,7 @@
 package cc.polarastrum.aiyatsbus.libreforge.target
 
 import cc.polarastrum.aiyatsbus.core.fixedEnchants
+import cc.polarastrum.aiyatsbus.libreforge.enchant.LibreforgeAiyatsbusEnchant
 import cc.polarastrum.aiyatsbus.libreforge.enchant.LibreforgeEnchantLevel
 import cc.polarastrum.aiyatsbus.libreforge.enchant.LibreforgeEnchants
 import com.github.benmanes.caffeine.cache.Caffeine
@@ -61,6 +62,30 @@ object LibreforgeEnchantFinder : ItemHolderFinder<LibreforgeEnchantLevel>() {
     }
 
     internal fun LivingEntity.clearEnchantmentCache() = levelCache.invalidate(this.uniqueId)
+
+    private val LivingEntity.cachedLevels: List<ProvidedLevel>
+        get() = levelCache.get(this.uniqueId) {
+            toHolderProvider().provide(this.toDispatcher())
+                .mapNotNull {
+                    val level = it.holder as? LibreforgeEnchantLevel ?: return@mapNotNull null
+                    val item = it.provider as? ItemStack ?: return@mapNotNull null
+
+                    ProvidedLevel(level, item, it)
+                }
+        }
+
+    fun LivingEntity.hasEnchantActive(enchant: LibreforgeAiyatsbusEnchant): Boolean {
+        return this.cachedLevels
+            .filter { it.level.enchant == enchant }
+            .any { it.level.conditions.areMet(this.toDispatcher(), it.holder) }
+    }
+
+    fun LivingEntity.getItemsWithEnchantActive(enchant: LibreforgeAiyatsbusEnchant): Map<ItemStack, Int> {
+        return this.cachedLevels
+            .filter { it.level.enchant == enchant }
+            .filter { it.level.conditions.areMet(this.toDispatcher(), it.holder) }
+            .associate { it.item to it.level.level }
+    }
 
     private data class ProvidedLevel(
         val level: LibreforgeEnchantLevel,

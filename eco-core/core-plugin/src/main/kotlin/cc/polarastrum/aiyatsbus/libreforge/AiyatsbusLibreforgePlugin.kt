@@ -17,7 +17,9 @@ import com.willfp.libreforge.registerHolderPlaceholderProvider
 import com.willfp.libreforge.registerHolderProvider
 import com.willfp.libreforge.registerSpecificRefreshFunction
 import org.bukkit.Bukkit
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.LivingEntity
+import java.io.File
 
 /**
  * AiyatsbusLibreforgePlugin
@@ -31,11 +33,35 @@ lateinit var plugin: AiyatsbusLibreforgePlugin
 
 class AiyatsbusLibreforgePlugin : LibreforgePlugin() {
 
+    var autoMigrate: Boolean
+
     init {
         plugin = this
+        saveResource("config.yml", false)
+//        val config = Configuration.loadFromFile(File(dataFolder, "config.yml"))
+        val file = File(dataFolder, "config.yml")
+        val config = YamlConfiguration.loadConfiguration(File(dataFolder, "config.yml"))
+        autoMigrate = config.getBoolean("auto-migrate")
+        if (autoMigrate) {
+            config["auto-migrate"] = false
+            config.save(file)
+        }
     }
 
     override fun loadConfigCategories(): List<ConfigCategory> {
+        // 在这之前, 先进行从 EcoEnchants 文件夹的复制操作
+        if (autoMigrate) {
+            val source = File(dataFolder.parent, "EcoEnchants/enchants/")
+            val target = File(dataFolder, "enchantments/")
+
+            source.walk().filter { it.isFile }.forEach { file ->
+                val dest = File(target, file.relativeTo(source).path)
+                if (!dest.exists()) {
+                    dest.parentFile.mkdirs()
+                    file.copyTo(dest)
+                }
+            }
+        }
         return listOf(
             LibreforgeEnchants
         )
@@ -57,7 +83,7 @@ class AiyatsbusLibreforgePlugin : LibreforgePlugin() {
 
     override fun handleAfterLoad() {
         if (Prerequisite.HAS_1_21.isMet) {
-            (Aiyatsbus.api().getEnchantmentRegisterer() as ModernEnchantmentRegisterer).replaceRegistry()
+            (Aiyatsbus.api().getEnchantmentRegisterer() as ModernEnchantmentRegisterer).freezeRegistry()
         }
 
         AiyatsbusCommand.init()

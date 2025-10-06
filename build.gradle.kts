@@ -1,7 +1,7 @@
 plugins {
     java
     `java-library`
-    kotlin("jvm") version "1.9.20"
+    kotlin("jvm") version "2.1.0"
     id("com.github.johnrengelman.shadow") version "8.0.0"
     id("com.willfp.libreforge-gradle-plugin") version "1.0.2"
 }
@@ -30,18 +30,16 @@ allprojects {
         maven {
             url = uri("https://repo.papermc.io/repository/maven-public/")
         }
-        maven("http://sacredcraft.cn:8081/repository/releases/") {
-            isAllowInsecureProtocol = true
-        }
+        maven("https://repo.tabooproject.org/repository/releases/")
     }
 
     dependencies {
-        compileOnly("com.willfp:eco:6.73.4")
+        compileOnly("com.willfp:eco:6.75.0")
         compileOnly("io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT")
-        compileOnly("cc.polarastrum:Aiyatsbus:1.0.0-pre23")
+        compileOnly("cc.polarastrum:aiyatsbus:1.0.17:api")
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.5")
         compileOnly("org.jetbrains:annotations:23.0.0")
-        compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.9.20")
+        compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.1.0")
     }
 
     java {

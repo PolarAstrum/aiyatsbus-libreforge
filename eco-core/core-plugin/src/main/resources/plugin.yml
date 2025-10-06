@@ -11,6 +11,8 @@ softdepend:
 loadafter:
   - Aiyatsbus
 
+load: STARTUP
+
 commands:
   aiyatsbuslibreforge:
     description: Base Command

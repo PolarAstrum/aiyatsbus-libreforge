@@ -2,3 +2,14 @@
 # AiyatsbusLibreforge
 # by Mical
 #
+
+# 颜色变量
+# Aiyatsbus 的附魔描述默认是灰色
+# 但 EcoEnchants 的附魔描述是白色
+# 通过这个选项控制附魔描述开头的颜色
+# 来防止变量前是灰色, 变量后是白色的情况出现
+color-code: "&r"
+# 是否自动从 EcoEnchants 文件夹迁移
+# 迁移一次后, 此选项会被设置为关闭
+# 注意: 会跳过本插件附魔文件夹下已存在的附魔
+auto-migrate: true

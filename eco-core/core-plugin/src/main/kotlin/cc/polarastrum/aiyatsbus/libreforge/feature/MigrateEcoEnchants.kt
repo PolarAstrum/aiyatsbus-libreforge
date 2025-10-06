@@ -28,6 +28,13 @@ object MigrateEcoEnchants {
         "veryspecial" to "稀世"
     )
 
+    private val hardcodedEnchantConfigTransfer = mapOf(
+        "permanence_curse" to emptyList(),
+        "repairing" to listOf("repair-per-level", "frequency", "not-while-holding"),
+        "replenish" to listOf("consume-seeds", "only-fully-grown"),
+        "soulbound" to listOf("single-use")
+    )
+
     private fun getRarity(id: String, type: String, eco: String): String {
         if (type == "curse") {
             plugin.logger.warning("EcoEnchants curse enchantment $id's rarity ($eco) has been converted to Aiyatsbus rarity: 诅咒")
@@ -114,7 +121,7 @@ object MigrateEcoEnchants {
             return@map "CONFLICT_ENCHANT:$name"
         }
 
-        config["display.description.general"] = ecoConfig.getString("description").replaceVariables()
+        config["display.description.general"] = plugin.configYml.getString("color-code") + ecoConfig.getString("description").replaceVariables()
 
         config["dependencies"] = ecoConfig.getStrings("dependencies")
 
@@ -129,6 +136,10 @@ object MigrateEcoEnchants {
 
         config["effects"] = taboolibEcoConfig["effects"]
         config["conditions"] = taboolibEcoConfig["conditions"]
+
+        hardcodedEnchantConfigTransfer[id]?.forEach { key ->
+            config[key] = taboolibEcoConfig[key]
+        }
 
         config.saveToFile(file)
     }
